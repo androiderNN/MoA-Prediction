@@ -6,9 +6,16 @@ from . import dataset
 class tabular_dataset(dataset.dataset):
     '''
     表形式データのデータセットクラス'''
-    def __init__(self, x_path, y_path):
+    def __init__(self, x_path, sig_id, y_path = None):
         self.x = pd.read_csv(x_path).to_numpy(dtype='float16')
-        self.y = pd.read_csv(y_path).to_numpy(dtype='float16')
+        sig_id = pd.read_csv(sig_id).to_numpy(dtype='object')
+        self.id2ind_dic = {id: i for id, i in enumerate(sig_id)}
+
+        # trainデータのみ
+        self.y = pd.read_csv(y_path).to_numpy(dtype='float16') if y_path is not None else None
+
+    def id_to_index(self, ids : list[str]) -> list[int]:
+        return [self.id2ind_dic[id] for id in ids]
 
     def get_x(self, index : list[int]):
         return self.x[index]

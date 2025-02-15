@@ -24,9 +24,9 @@ def save_ids():
         ids.to_csv(paths['sig_id'])
 
 def main():
-    # save_y()
+    save_y()
     save_ids()
-    # save_tabular_data()
+    save_tabular_data()
 
 if __name__ == '__main__':
     main()

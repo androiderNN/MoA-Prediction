@@ -5,17 +5,17 @@ class dataset():
     def __init__(self):
         self.x = None
         self.y = None
+        self.sig_id = None
     
+    def get_id_list(self) -> list[str]:
+        '''sig_idのリストを取得する'''
+        return self.sig_id
+
     def id_to_index(self, id : str) -> int:
         '''
         idからindexを取得する'''
         raise NotImplementedError
     
-    def get_id(self, index : list[int]) -> list[str]:
-        '''
-        indexからidを取得する'''
-        return [self.id_to_index[i] for i in index]
-
     def get_x(self):
         '''
         indexで学習データを取得するメソッド'''
