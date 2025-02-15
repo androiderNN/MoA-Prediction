@@ -7,7 +7,11 @@ class model_lgb(model.model_base):
         self.model = None
         self.kwargs = kwargs
 
+        self.checkarguments(['params', 'stopping_rounds'])
+
     def train(self, tr_x, tr_y, va_x, va_y):
+        '''
+        いずれも表形式データ'''
         tr_lgb = lgb.Dataset(tr_x, tr_y)
         va_lgb = lgb.Dataset(va_x, va_y)
 
