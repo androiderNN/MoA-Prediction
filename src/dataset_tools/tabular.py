@@ -20,6 +20,12 @@ class tabular_dataset(dataset.dataset):
             self.x = self.get_x_byid(sig_id)
             self.y = self.get_y_byid(sig_id) if self.y is not None else None
 
+            # sig_idの更新
+            self.sig_id = sig_id
+            self.id2ind_dic = {id: i for i, id in enumerate(sig_id)}
+        else:
+            self.sig_id = sig_id_master
+
     def id_to_index(self, ids : list[str]) -> list[int]:
         return [self.id2ind_dic[id] for id in ids]
 

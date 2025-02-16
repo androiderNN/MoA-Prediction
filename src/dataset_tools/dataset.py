@@ -13,6 +13,9 @@ class dataset():
         self.y = None
         self.sig_id = None
     
+    def __len__(self):
+        return len(self.sig_id)
+
     def get_id_list(self) -> list[str]:
         '''sig_idのリストを取得する'''
         return self.sig_id
