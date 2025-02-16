@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+import numpy as np
+import matplotlib.pyplot as plt
 
 class model_base():
     '''
@@ -87,6 +89,13 @@ class model_torch(model_base):
         opt = get_optimizer(self.kwargs['optimizer'])
         self.optimizer = opt(self.model.parameters(), lr=self.kwargs['lr'])
 
+    def plot_loss(self, history : dict):
+        '''
+        学習履歴をグラフで描画する
+        historyは{'train': [], 'valid': []}を想定'''
+        plt.plot(np.array(list(history.values())).T)
+        plt.show()
+
     def train(self, tr_dataset, va_dataset):
         '''
         model等を設定すれば学習ループを回す'''
@@ -127,12 +136,18 @@ class model_torch(model_base):
                 print(f'{i}th epoch')
                 print(f'train loss : {loss.item()}')
                 print(f'valid loss : {va_loss.item()}')
-                print(tr_pred)
+
+            # lossがnanの場合
+            if np.isnan(loss.item()):
+                print(f'{i}th epoch : loss is nan. break')
+                self.plot_loss(history)
+                break
 
             # early stopping
             if i >= self.kwargs['estop_round']:
                 if history['valid'][-1] >= history['valid'][-1*self.kwargs['estop_round']]:
                     print(f'early stopping : {i}th epoch')
+                    self.plot_loss(history)
                     break
 
     def predict(self, x):
