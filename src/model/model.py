@@ -33,6 +33,7 @@ class log_loss(nn.Module):
         super().__init__()
 
     def forward(self, pred, target):
+        pred = torch.sigmoid(pred)
         return -1 * torch.mean((torch.log(pred) * target) + (torch.log(1 - pred) * (1 - target)))
 
 def get_lossfn(fn_name):
@@ -107,7 +108,8 @@ class model_torch(model_base):
 
             # 1またはnum_iter//10iterationごとに進捗出力
             if i % max((self.kwargs['num_iter'] // 10), 1) == 0:
-                print(f'{i}th iter')
+                print(f'{i}th epoch')
+                print(f'train loss : {loss.item()}')
 
     def predict(self, x):
         self.model.eval()
