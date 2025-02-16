@@ -1,0 +1,15 @@
+gbdt:
+  params:
+  stopping_rounds: 3
+
+model_tabular_nn:
+  num_iter: 100
+  loss_fn: logloss
+  optimizer: adam
+  batch_size: 0
+  lr: 0.001
+  linear_3layers_params:
+    num_features: 875
+    hidden_size: 100
+    out_features: 206
+    p_dropout: 0.1
