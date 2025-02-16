@@ -71,7 +71,7 @@ class model_torch(model_base):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-        arg_keys = ['num_iter', 'loss_fn', 'optimizer', 'batch_size', 'lr']
+        arg_keys = ['num_iter', 'loss_fn', 'optimizer', 'batch_size', 'lr', 'estop_round']
         self.checkarguments(arg_keys)
 
         self.model = None
@@ -90,26 +90,50 @@ class model_torch(model_base):
     def train(self, tr_dataset, va_dataset):
         '''
         model等を設定すれば学習ループを回す'''
-        self.model.train()
-
+        # データセットのtensorへの変換　要修正
         tr_dataset.x = torch.tensor(tr_dataset.x, dtype=torch.float)
         tr_dataset.y = torch.tensor(tr_dataset.y, dtype=torch.float)
 
+        va_dataset.x = torch.tensor(va_dataset.x, dtype=torch.float)
+        va_dataset.y = torch.tensor(va_dataset.y, dtype=torch.float)
+
+        # 記録用list
+        history = {'train': list(), 'valid': list()}
+
+        # trainループ
         for i in range(self.kwargs['num_iter']):
+            self.model.train()
             self.optimizer.zero_grad()
 
             # 予測
-            y_pred = self.model(tr_dataset.get_x())
+            tr_pred = self.model(tr_dataset.get_x())
 
             # 逆伝播
-            loss = self.loss_fn(y_pred, tr_dataset.get_y())
+            loss = self.loss_fn(tr_pred, tr_dataset.get_y())
             loss.backward()
             self.optimizer.step()
+
+            # バリデーションでのloss算出と記録
+            self.model.eval()
+            with torch.no_grad():
+                va_pred = self.model(va_dataset.get_x())
+                va_loss = self.loss_fn(va_pred, va_dataset.get_y())
+
+            history['train'].append(loss.item())
+            history['valid'].append(va_loss.item())
 
             # 1またはnum_iter//10iterationごとに進捗出力
             if i % max((self.kwargs['num_iter'] // 10), 1) == 0:
                 print(f'{i}th epoch')
                 print(f'train loss : {loss.item()}')
+                print(f'valid loss : {va_loss.item()}')
+                print(tr_pred)
+
+            # early stopping
+            if i >= self.kwargs['estop_round']:
+                if history['valid'][-1] >= history['valid'][-1*self.kwargs['estop_round']]:
+                    print(f'early stopping : {i}th epoch')
+                    break
 
     def predict(self, x):
         self.model.eval()

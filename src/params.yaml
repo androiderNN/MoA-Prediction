@@ -8,6 +8,7 @@ model_tabular_nn:
   optimizer: adam
   batch_size: 0
   lr: 0.001
+  estop_round: 5
   linear_3layers_params:
     num_features: 875
     hidden_size: 100
