@@ -33,7 +33,7 @@ class log_loss(nn.Module):
         super().__init__()
 
     def forward(self, pred, target):
-        pred = torch.sigmoid(pred)
+        pred = pred + 1e-10
         return -1 * torch.mean((torch.log(pred) * target) + (torch.log(1 - pred) * (1 - target)))
 
 def get_lossfn(fn_name):

@@ -9,7 +9,8 @@ class linear_3layers(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(in_features=kwargs['num_features'], out_features=kwargs['hidden_size']),
             nn.Dropout(p=kwargs['p_dropout']),
-            nn.Linear(in_features=kwargs['hidden_size'], out_features=kwargs['out_features'])
+            nn.Linear(in_features=kwargs['hidden_size'], out_features=kwargs['out_features']),
+            nn.Sigmoid()
         )
 
     def forward(self, x):
