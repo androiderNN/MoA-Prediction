@@ -23,11 +23,17 @@ class tabular_dataset(dataset.dataset):
     def id_to_index(self, ids : list[str]) -> list[int]:
         return [self.id2ind_dic[id] for id in ids]
 
-    def get_x(self, index : list[int]):
-        return self.x[index]
+    def get_x(self, index : list[int] = None):
+        if index is None:
+            return self.x
+        else:
+            return self.x[index]
 
-    def get_y(self, index : list[int]):
-        return self.y[index]
+    def get_y(self, index : list[int] = None):
+        if index is None:
+            return self.y
+        else:
+            return self.y[index]
 
 def save_x(csvpath, savepath) -> None:
     '''
