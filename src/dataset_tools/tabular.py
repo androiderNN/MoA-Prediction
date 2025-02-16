@@ -53,4 +53,4 @@ def save_x(csvpath, savepath) -> None:
     df.drop(columns='sig_id', inplace=True)
 
     # 保存
-    df.to_csv(savepath)
+    df.to_csv(savepath, index=False)

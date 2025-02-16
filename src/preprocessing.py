@@ -14,14 +14,14 @@ def save_y():
     '''
     targetを保存する'''
     df = pd.read_csv(config.train_paths['raw_target_scored']).drop(columns='sig_id')
-    df.to_csv(config.train_paths['y'])
+    df.to_csv(config.train_paths['y'], index=False)
 
 def save_ids():
     '''
     id列のみ保存する'''
     for paths in [config.train_paths, config.test_paths]:
         ids = pd.read_csv(paths['raw_features'], usecols=['sig_id'])
-        ids.to_csv(paths['sig_id'])
+        ids.to_csv(paths['sig_id'], index=False)
 
 def main():
     save_y()
