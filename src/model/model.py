@@ -150,7 +150,8 @@ class model_torch(model_base):
                     self.plot_loss(history)
                     break
 
-    def predict(self, x):
+    def predict(self, dataset):
+        dataset.x = torch.tensor(dataset.x, dtype=torch.float)
         self.model.eval()
-        return self.model(x)
+        return self.model(dataset.x).detach().numpy()
 

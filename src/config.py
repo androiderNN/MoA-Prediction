@@ -22,6 +22,7 @@ train_paths = {
 
 test_paths = {
     'raw_features': raw_data_dir / 'test_features.csv',
+    'sample_submission': raw_data_dir / 'sample_submission.csv',
     'processed_dir': data_dir / 'test'
 }
 
