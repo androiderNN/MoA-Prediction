@@ -1,3 +1,9 @@
+import pandas as pd
+
+def get_id_list(path):
+    '''
+    全idのリストを取得する'''
+    return pd.read_csv(path, usecols=['sig_id']).to_numpy(dtype='object').flatten()
 
 class dataset():
     '''
@@ -24,7 +30,7 @@ class dataset():
     def get_x_byid(self, id : list[str]):
         '''
         idで学習データを取得するメソッド'''
-        return [self.get_x(self.id_to_index(i)) for i in id]
+        return self.get_x(self.id_to_index(id))
     
     def get_y(self):
         '''
@@ -34,5 +40,5 @@ class dataset():
     def get_y_byid(self, id : list[str]):
         '''
         idでターゲットを取得するメソッド'''
-        return [self.get_y(self.id_to_index(i)) for i in id]
-    
+        return self.get_y(self.id_to_index(id))
+

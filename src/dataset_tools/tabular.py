@@ -6,13 +6,19 @@ from . import dataset
 class tabular_dataset(dataset.dataset):
     '''
     表形式データのデータセットクラス'''
-    def __init__(self, x_path, sig_id, y_path = None):
+    def __init__(self, x_path, sig_id_path, y_path = None, sig_id = None):
         self.x = pd.read_csv(x_path).to_numpy(dtype='float16')
-        sig_id = pd.read_csv(sig_id).to_numpy(dtype='object')
-        self.id2ind_dic = {id: i for id, i in enumerate(sig_id)}
+        sig_id_master = dataset.get_id_list(sig_id_path)
+        self.id2ind_dic = {id: i for i, id in enumerate(sig_id_master)}
 
-        # trainデータのみ
+        # trainデータのみtargetをロード
         self.y = pd.read_csv(y_path).to_numpy(dtype='float16') if y_path is not None else None
+
+        # validation用に分割した場合を想定
+        # idからindexを取得し、必要なデータのみを抽出して再格納
+        if sig_id is not None:
+            self.x = self.get_x_byid(sig_id)
+            self.y = self.get_y_byid(sig_id) if self.y is not None else None
 
     def id_to_index(self, ids : list[str]) -> list[int]:
         return [self.id2ind_dic[id] for id in ids]
