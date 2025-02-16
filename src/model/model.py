@@ -42,7 +42,7 @@ def get_lossfn(fn_name):
 
     if fn_name == 'logloss':
         lossfn = log_loss()
-    if fn_name == 'crossentropy':
+    elif fn_name == 'crossentropy':
         lossfn = nn.CrossEntropyLoss()
     elif fn_name == 'mse':
         lossfn = nn.MSELoss()
@@ -54,14 +54,14 @@ def get_lossfn(fn_name):
 def get_optimizer(opt_name):
     '''
     optimizerを返す'''
-    opt = None
+    optimizer = None
 
     if opt_name == 'adam':
-        opt = torch.optim.Adam()
+        optimizer = torch.optim.Adam
     else:
         raise ValueError(f'optimizer {opt_name} not defined.')
 
-    return opt
+    return optimizer
 
 class model_torch(model_base):
     '''
@@ -70,30 +70,43 @@ class model_torch(model_base):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-        arg_keys = ['num_iter', 'loss_fn', 'optimizer', 'batch_size']
+        arg_keys = ['num_iter', 'loss_fn', 'optimizer', 'batch_size', 'lr']
         self.checkarguments(arg_keys)
 
         self.model = None
+        self.optimizer = None
         self.loss_fn = get_lossfn(kwargs['loss_fn'])
-        self.optimizer = get_optimizer(kwargs['optimizer'])
 
-    def train(self, x, y):
+    def set_optimizer(self):
+        '''
+        model設定後に呼び出すとoptimizerを定義する'''
+        if self.model is None:
+            raise ValueError('set model')
+
+        opt = get_optimizer(self.kwargs['optimizer'])
+        self.optimizer = opt(self.model.parameters(), lr=self.kwargs['lr'])
+
+    def train(self, tr_dataset, va_dataset):
         '''
         model等を設定すれば学習ループを回す'''
         self.model.train()
+
+        tr_dataset.x = torch.tensor(tr_dataset.x, dtype=torch.float)
+        tr_dataset.y = torch.tensor(tr_dataset.y, dtype=torch.float)
 
         for i in range(self.kwargs['num_iter']):
             self.optimizer.zero_grad()
 
             # 予測
-            y_pred = self.model(x)
+            y_pred = self.model(tr_dataset.get_x())
 
             # 逆伝播
-            loss = self.loss_fn(y_pred, y)
+            loss = self.loss_fn(y_pred, tr_dataset.get_y())
             loss.backward()
             self.optimizer.step()
 
-            if i % (self.kwargs['num_iter'] // 10) == 0:
+            # 1またはnum_iter//10iterationごとに進捗出力
+            if i % max((self.kwargs['num_iter'] // 10), 1) == 0:
                 print(f'{i}th iter')
 
     def predict(self, x):
