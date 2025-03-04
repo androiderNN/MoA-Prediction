@@ -2,7 +2,9 @@ from pathlib import Path
 
 proj_dir = Path(__file__).parent.parent
 
+model_dir = proj_dir / 'model'
 export_dir = proj_dir / 'export'
+submission_dataset_dir = proj_dir / 'submission_dataset'
 
 src_dir = proj_dir / 'src'
 param_yaml = src_dir / 'params.yaml'
